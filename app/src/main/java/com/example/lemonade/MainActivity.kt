@@ -82,33 +82,59 @@ fun LemonadeApp() {
 @Composable
 fun ActionChoices() {
     var currentStep by remember { mutableIntStateOf(1) }
-    var painter by remember { mutableIntStateOf(0) }
-    var contentDescription by remember { mutableIntStateOf(0) }
-    var text by remember { mutableIntStateOf(0) }
     var threshold by remember { mutableIntStateOf(0) }
 
     when(currentStep) {
         1 -> {
-            painter = R.drawable.lemon_tree
-            contentDescription = R.string.lemon_tree_content_description
-            text = R.string.lemon_tree
+            LemonTextAndImage(
+                painter = R.drawable.lemon_tree,
+                contentDescription = R.string.lemon_tree_content_description,
+                text = R.string.lemon_tree
+            ) {
+                currentStep = 2
+                threshold = (2..4).random()
+            }
+
         }
         2 -> {
-            painter = R.drawable.lemon_squeeze
-            contentDescription = R.string.lemon_content_description
-            text = R.string.lemon
+            LemonTextAndImage(
+                painter = R.drawable.lemon_squeeze,
+                contentDescription = R.string.lemon_content_description,
+                text = R.string.lemon
+            ) {
+                threshold--
+                if (threshold==0) currentStep = 3
+            }
         }
         3 -> {
-            painter = R.drawable.lemon_drink
-            contentDescription = R.string.lemonade_content_description
-            text = R.string.lemonade
+            LemonTextAndImage(
+                painter = R.drawable.lemon_drink,
+                contentDescription = R.string.lemonade_content_description,
+                text = R.string.lemonade
+            ) {
+                currentStep = 4
+            }
         }
         4 -> {
-            painter = R.drawable.lemon_restart
-            contentDescription = R.string.lemonade_empty_content_description
-            text = R.string.lemonade_empty
+            LemonTextAndImage(
+                painter = R.drawable.lemon_restart,
+                contentDescription = R.string.lemonade_empty_content_description,
+                text = R.string.lemonade_empty
+            ) {
+                currentStep = 1
+            }
         }
     }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LemonadeActions() {
+    LemonadeApp()
+}
+@Composable
+fun LemonTextAndImage(painter: Int, contentDescription: Int, text: Int, onClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,18 +148,7 @@ fun ActionChoices() {
                 disabledContentColor = MaterialTheme.colorScheme.primary,
                 disabledContainerColor = MaterialTheme.colorScheme.primary
             ),
-            onClick = {
-                if (currentStep==1) {
-                    threshold = (2..4).random()
-                    currentStep++
-                }
-                else if (currentStep==2){
-                    threshold--
-                    if (threshold==0) currentStep=3
-                }
-                else if (currentStep==4) currentStep = 1
-                else currentStep++
-            }
+            onClick = onClick
         ) {
             Image(
                 painter = painterResource(painter),
@@ -152,11 +167,4 @@ fun ActionChoices() {
         )
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun LemonadeActions() {
-    LemonadeApp()
-}
-
 
